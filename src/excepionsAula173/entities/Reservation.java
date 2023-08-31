@@ -1,5 +1,8 @@
 package excepionsAula173.entities;
 
+import excepionsAula173.exceptions.DomainExceptions;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -13,7 +16,10 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(Integer roomNumber, Date checkIn, Date checkOut) {
+    public Reservation(Integer roomNumber, Date checkIn, Date checkOut){//throws DomainExceptions {
+        if(!checkOut.after(checkIn)){
+            throw new DomainExceptions("* Check-out date must be after check-in date\n");
+        }
         this.roomNumber = roomNumber;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
@@ -40,17 +46,16 @@ public class Reservation {
         return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
     }
 
-    public String updateDates(Date checkIn, Date checkOut){
+    public void updateDates(Date checkIn, Date checkOut){//throws DomainExceptions{
         Date now = new Date();
         if(checkIn.before(now) || checkOut.before(now)){
-            return "* Reservation dates for update must be future dates.\n";
+            throw new DomainExceptions("* Reservation dates for update must be future dates.\n");
         }
         if(!checkOut.after(checkIn)){
-            return "* Check-out date must be after check-in date\n";
+            throw new DomainExceptions("* Check-out date must be after check-in date\n");
         }
         this.checkIn = checkIn;
         this.checkOut = checkOut;
-        return null;//Retorna nulo caso não dê nenhum erro
     }
 
     @Override
